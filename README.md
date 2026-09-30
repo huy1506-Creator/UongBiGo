@@ -4,7 +4,7 @@
 
 **UongbiGo** là hệ thống đặt món Canteen được xây dựng nhằm mô phỏng quy trình đặt món trực tuyến trong khu vực trường học/canteen.
 
-Hệ thống cho phép người dùng xem thực đơn, thêm món vào giỏ hàng, đặt món và theo dõi trạng thái đơn hàng.
+Hệ thống cho phép người dùng xem thực đơn, tìm kiếm món ăn, thêm món vào giỏ hàng, đặt món và theo dõi trạng thái đơn hàng.
 
 Ngoài giao diện dành cho người dùng, hệ thống còn có giao diện dành cho **nhân viên bếp** và **quản trị viên (Admin)**.
 
@@ -13,78 +13,76 @@ Ngoài giao diện dành cho người dùng, hệ thống còn có giao diện d
 
 ---
 
-# 🎯 Mục tiêu của dự án
+## 🎯 Mục tiêu của dự án
 
 Dự án được xây dựng nhằm:
 
-- Thực hành phát triển giao diện web.
+- Thực hành phát triển giao diện website.
 - Thực hành lập trình JavaScript.
-- Xây dựng quy trình đăng nhập và đăng ký.
+- Xây dựng chức năng đăng ký và đăng nhập.
 - Thực hành phân quyền người dùng.
 - Xây dựng chức năng giỏ hàng.
 - Xây dựng quy trình đặt món và quản lý đơn hàng.
-- Thực hành quản lý dữ liệu phía client.
+- Thực hành lưu trữ và xử lý dữ liệu phía client.
 - Làm quen với Git và GitHub.
-- Xây dựng một project có thể sử dụng làm sản phẩm học tập và portfolio.
+- Xây dựng project phục vụ học tập và portfolio cá nhân.
 
 ---
 
-# 🚀 Các chức năng chính
+## 🚀 Chức năng chính
 
-## 👤 1. Người dùng
+### 👤 Người dùng
 
 Người dùng có thể:
 
 - Đăng ký tài khoản.
-- Đăng nhập.
-- Đăng xuất.
+- Đăng nhập và đăng xuất.
 - Xem danh sách món ăn.
-- Tìm kiếm và xem thực đơn.
+- Tìm kiếm món ăn.
+- Xem thông tin món ăn.
 - Thêm món vào giỏ hàng.
-- Thay đổi số lượng món.
+- Tăng/giảm số lượng món.
 - Xóa món khỏi giỏ hàng.
 - Xem tổng tiền.
 - Đặt món.
 - Theo dõi trạng thái đơn hàng.
 - Xem chi tiết đơn hàng.
-- Thực hiện quy trình thanh toán mô phỏng.
+- Thực hiện thanh toán mô phỏng.
 
 ---
 
-# 👨‍🍳 2. Nhân viên bếp - KDS
+### 👨‍🍳 Nhân viên bếp - KDS
 
-Hệ thống có giao diện **Kitchen Display System (KDS)** dành cho nhân viên bếp.
+Hệ thống cung cấp giao diện **Kitchen Display System (KDS)** cho nhân viên bếp.
 
 Nhân viên có thể:
 
-- Xem các đơn hàng mới.
+- Xem danh sách đơn hàng.
 - Xem chi tiết đơn hàng.
-- Theo dõi các món trong đơn.
+- Theo dõi đơn hàng đang chờ xử lý.
 - Cập nhật trạng thái đơn hàng.
-- Theo dõi các đơn đang chờ xử lý.
-- Quản lý tình trạng món ăn.
+- Theo dõi tình trạng món ăn.
 - Cập nhật trạng thái món còn/hết.
 
 ---
 
-# 👨‍💼 3. Quản trị viên - Admin
+### 👨‍💼 Quản trị viên - Admin
 
 Admin có thể:
 
 - Xem Dashboard.
-- Theo dõi thống kê.
-- Quản lý đơn hàng.
+- Theo dõi thống kê cơ bản.
 - Quản lý thực đơn.
 - Thêm món ăn.
 - Chỉnh sửa món ăn.
 - Ẩn món ăn.
 - Xóa món ăn.
+- Quản lý đơn hàng.
 - Theo dõi trạng thái đơn hàng.
-- Quản lý dữ liệu hệ thống.
 
 ---
 
-# 🔐 Phân quyền người dùng
+## 🔐 Phân quyền người dùng
 
 Hệ thống hiện có 3 vai trò:
 
