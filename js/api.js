@@ -210,9 +210,20 @@ async function apiFetch(path, options = {}) {
     }
 
     /* ---------- MENU (nguoi mua xem) ---------- */
-    if (method === "GET" && rawPath === "/menu") {
-      return db.menu.filter((m) => m.trangThai !== "DA_XOA");
+if (method === "GET" && rawPath === "/menu") {
+
+    const { data, error } = await supabaseClient
+        .from("menu_items")
+        .select("*")
+        .neq("trangThai", "DA_XOA")
+        .order("maMon", { ascending: true });
+
+    if (error) {
+        fail(500, error.message);
     }
+
+    return data || [];
+}
 
     /* ---------- DON HANG (nguoi mua) ---------- */
     if (method === "GET" && rawPath === "/donhang/cua-toi") {
