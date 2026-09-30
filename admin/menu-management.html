@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Uông Bí GO · Quản lý món</title>
+<link rel="icon" href="../favicon.ico" />
+<link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="brand">Uông Bí GO</div>
+    <nav>
+      <a href="dashboard.html">📊 Dashboard</a>
+      <a href="menu-management.html" class="active">🍜 Quản lý món</a>
+      <a href="orders.html">📦 Quản lý đơn</a>
+      <a href="../menu.html">👤 Giao diện người mua</a>
+    </nav>
+    <div class="logout-box">
+      <div id="adminName" style="font-size:12px;margin-bottom:10px;"></div>
+      <button class="btn btn-outline btn-sm" id="btnLogout">Đăng xuất</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <div class="page-title" style="margin-bottom:4px;">Quản lý món ăn</div>
+        <p class="page-subtitle" style="margin:0;">Thêm, sửa, ẩn hoặc xóa món trong thực đơn.</p>
+      </div>
+      <button class="btn btn-primary" id="btnAdd">+ Thêm món</button>
+    </div>
+
+    <div id="alertBox"></div>
+    <div class="section-card">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Mã</th><th>Tên món</th><th>Giá</th><th>Mô tả</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+          <tbody id="menuBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="modal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3 id="modalTitle">Thêm món ăn</h3>
+    <div class="field"><label>Tên món</label><input id="tenMon" /></div>
+    <div class="field"><label>Đơn giá</label><input id="donGia" type="number" min="1" /></div>
+    <div class="field"><label>Mô tả</label><textarea id="moTa" rows="3"></textarea></div>
+    <div class="field"><label>Trạng thái</label>
+      <select id="trangThai">
+        <option value="CON_HANG">Còn hàng</option>
+        <option value="HET_HANG">Hết hàng</option>
+        <option value="DA_XOA">Đã xóa</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="btnCancel">Hủy</button>
+      <button class="btn btn-primary" id="btnSave">Lưu</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/api.js"></script>
+<script>
+const user = Auth.requireRole(["ROLE_ADMIN"]);
+let editingId = null;
+
+if (user) {
+  document.getElementById("adminName").textContent = user.hoTen;
+  document.getElementById("btnLogout").addEventListener("click", () => {
+    Auth.clear();
+    goTo("index.html");
+  });
+  loadMenu();
+}
+
+async function loadMenu() {
+  try {
+    const items = await apiFetch("/admin/mon-an");
+    document.getElementById("menuBody").innerHTML = items.map(m => `
+      <tr>
+        <td>#${m.maMon}</td>
+        <td><b>${escapeHtml(m.tenMon)}</b></td>
+        <td>${formatCurrency(m.donGia)}</td>
+        <td>${escapeHtml(m.moTa || "")}</td>
+        <td>${statusMenu(m.trangThai)}</td>
+        <td>
+          <button class="btn btn-outline btn-sm" data-edit="${m.maMon}">Sửa</button>
+          <button class="btn btn-danger btn-sm" data-delete="${m.maMon}">Xóa</button>
+        </td>
+      </tr>
+    `).join("");
+
+    document.querySelectorAll("[data-edit]").forEach(b => b.onclick = () => openEdit(items.find(x => x.maMon === Number(b.dataset.edit))));
+    document.querySelectorAll("[data-delete]").forEach(b => b.onclick = () => deleteItem(Number(b.dataset.delete)));
+  } catch (err) {
+    document.getElementById("alertBox").innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+  }
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+}
+
+function statusMenu(s) {
+  if (s === "CON_HANG") return '<span class="badge badge-ok">CÒN HÀNG</span>';
+  if (s === "HET_HANG") return '<span class="badge badge-out">HẾT HÀNG</span>';
+  return '<span class="badge">ĐÃ XÓA</span>';
+}
+
+function openEdit(item = null) {
+  editingId = item?.maMon || null;
+  document.getElementById("modalTitle").textContent = editingId ? "Chỉnh sửa món ăn" : "Thêm món ăn";
+  document.getElementById("tenMon").value = item?.tenMon || "";
+  document.getElementById("donGia").value = item?.donGia || "";
+  document.getElementById("moTa").value = item?.moTa || "";
+  document.getElementById("trangThai").value = item?.trangThai || "CON_HANG";
+  document.getElementById("modal").classList.remove("hidden");
+}
+
+document.getElementById("btnAdd").onclick = () => openEdit();
+document.getElementById("btnCancel").onclick = () => document.getElementById("modal").classList.add("hidden");
+
+document.getElementById("btnSave").onclick = async () => {
+  const payload = {
+    tenMon: document.getElementById("tenMon").value.trim(),
+    donGia: Number(document.getElementById("donGia").value),
+    moTa: document.getElementById("moTa").value.trim(),
+    hinhAnh: "",
+    trangThai: document.getElementById("trangThai").value
+  };
+
+  try {
+    if (!payload.tenMon || payload.donGia <= 0) throw { message: "Vui lòng nhập tên món và giá hợp lệ." };
+    if (editingId) {
+      await apiFetch(`/admin/mon-an/${editingId}`, { method: "PUT", body: JSON.stringify(payload) });
+    } else {
+      await apiFetch("/admin/mon-an", { method: "POST", body: JSON.stringify(payload) });
+    }
+    document.getElementById("modal").classList.add("hidden");
+    await loadMenu();
+  } catch (err) {
+    document.getElementById("alertBox").innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+  }
+};
+
+async function deleteItem(id) {
+  if (!confirm("Bạn có chắc muốn xóa món này?")) return;
+  try {
+    await apiFetch(`/admin/mon-an/${id}`, { method: "DELETE" });
+    loadMenu();
+  } catch (err) {
+    document.getElementById("alertBox").innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+  }
+}
+</script>
+</body>
+</html>

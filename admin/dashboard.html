@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Uông Bí GO · Admin Dashboard</title>
+<link rel="icon" href="../favicon.ico" />
+<link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="brand">Uông Bí GO</div>
+    <nav>
+      <a href="dashboard.html" class="active">📊 Dashboard</a>
+      <a href="menu-management.html">🍜 Quản lý món</a>
+      <a href="orders.html">📦 Quản lý đơn</a>
+      <a href="../menu.html">👤 Giao diện người mua</a>
+    </nav>
+    <div class="logout-box">
+      <div id="adminName" style="font-size:12px;margin-bottom:10px;"></div>
+      <button class="btn btn-outline btn-sm" id="btnLogout">Đăng xuất</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <div class="page-title" style="margin-bottom:4px;">Dashboard</div>
+        <p class="page-subtitle" style="margin:0;">Tổng quan hoạt động Uông Bí GO.</p>
+      </div>
+      <span class="role-badge">Quản trị viên</span>
+    </div>
+
+    <div id="alertBox"></div>
+    <div class="stat-cards">
+      <div class="stat-card accent"><div class="label">Doanh thu</div><div class="value" id="revenue">0đ</div></div>
+      <div class="stat-card"><div class="label">Đơn hoàn thành</div><div class="value" id="completed">0</div></div>
+      <div class="stat-card"><div class="label">Tổng đơn</div><div class="value" id="allOrders">0</div></div>
+      <div class="stat-card"><div class="label">Món đang bán</div><div class="value" id="selling">0</div></div>
+      <div class="stat-card"><div class="label">Món hết hàng</div><div class="value" id="outstock">0</div></div>
+    </div>
+
+    <div class="section-card">
+      <h2>Truy cập nhanh</h2>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a class="btn btn-primary" href="menu-management.html">Quản lý món ăn</a>
+        <a class="btn btn-outline" href="orders.html">Xem đơn hàng</a>
+        <a class="btn btn-outline" href="../kds.html">Mở KDS</a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../js/api.js"></script>
+<script>
+const user = Auth.requireRole(["ROLE_ADMIN"]);
+if (user) {
+  document.getElementById("adminName").textContent = user.hoTen;
+  document.getElementById("btnLogout").addEventListener("click", () => {
+    Auth.clear();
+    goTo("index.html");
+  });
+  loadStats();
+}
+
+async function loadStats() {
+  try {
+    const s = await apiFetch("/admin/thong-ke");
+    document.getElementById("revenue").textContent = formatCurrency(s.tongDoanhThu);
+    document.getElementById("completed").textContent = s.tongSoDonHoanThanh;
+    document.getElementById("allOrders").textContent = s.tongSoDonTatCa;
+    document.getElementById("selling").textContent = s.soMonDangBan;
+    document.getElementById("outstock").textContent = s.soMonHetHang;
+  } catch (err) {
+    document.getElementById("alertBox").innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+  }
+}
+</script>
+</body>
+</html>
