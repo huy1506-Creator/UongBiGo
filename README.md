@@ -8,8 +8,8 @@ Hệ thống cho phép người dùng xem thực đơn, tìm kiếm món ăn, th
 
 Ngoài giao diện dành cho người dùng, hệ thống còn có giao diện dành cho **nhân viên bếp** và **quản trị viên (Admin)**.
 
-> **Trạng thái dự án:** Frontend Prototype / Mock API  
-> Phiên bản hiện tại chạy phía client và sử dụng `localStorage` để mô phỏng việc lưu trữ dữ liệu.
+> **Trạng thái dự án:** Đang phát triển / tích hợp Supabase  
+> Phiên bản hiện tại đã tích hợp **Supabase (PostgreSQL)** cho dữ liệu thực đơn và trạng thái món ăn. Một số chức năng khác vẫn đang sử dụng Mock API/localStorage và được tiếp tục chuyển đổi sang Supabase.
 
 ---
 
@@ -23,9 +23,32 @@ Dự án được xây dựng nhằm:
 - Thực hành phân quyền người dùng.
 - Xây dựng chức năng giỏ hàng.
 - Xây dựng quy trình đặt món và quản lý đơn hàng.
-- Thực hành lưu trữ và xử lý dữ liệu phía client.
-- Làm quen với Git và GitHub.
+- Thực hành kết nối và xử lý dữ liệu với cơ sở dữ liệu.
+- Làm quen với Supabase và PostgreSQL.
+- Thực hành sử dụng Git và GitHub.
 - Xây dựng project phục vụ học tập và portfolio cá nhân.
+
+---
+
+## 🛠️ Công nghệ sử dụng
+
+### Frontend
+
+- HTML5
+- CSS3
+- JavaScript (ES6+)
+
+### Database / Backend Service
+
+- Supabase
+- PostgreSQL
+- Supabase JavaScript Client
+
+### Công cụ phát triển
+
+- Git
+- GitHub
+- Visual Studio Code
 
 ---
 
@@ -63,6 +86,8 @@ Nhân viên có thể:
 - Cập nhật trạng thái đơn hàng.
 - Theo dõi tình trạng món ăn.
 - Cập nhật trạng thái món còn/hết.
+
+Trạng thái món **Còn hàng / Hết hàng** đã được kết nối với Supabase và cập nhật trực tiếp trên bảng `menu_items`.
 
 ---
 
